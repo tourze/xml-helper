@@ -1,74 +1,179 @@
 # XML Helper
 
-一个简单但功能强大的 XML 处理工具，支持 XML 和数组之间的相互转换。
+[English](README.md) | [中文](README.zh-CN.md)
 
-A simple yet powerful XML processing tool that supports bidirectional conversion between XML and arrays.
+[![Latest Version](https://img.shields.io/packagist/v/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
+[![Total Downloads](https://img.shields.io/packagist/dt/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
+[![License](https://img.shields.io/packagist/l/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
 
-## 功能特点 / Features
+A lightweight PHP library for simple XML parsing and generation. Provides convenient methods to convert between XML strings and PHP arrays.
 
-- XML 转数组 / XML to Array
-- 数组转 XML / Array to XML
-- 支持 CDATA / CDATA support
-- 支持属性 / Attribute support
-- 支持特殊布尔值处理 / Special boolean value handling
-- 支持自定义根节点和子节点名称 / Custom root and child node names
-- 支持数组列表扁平化 / Array list flattening support
+## Features
 
-## 安装 / Installation
+- Convert XML strings to PHP arrays
+- Convert PHP arrays to XML strings
+- CDATA support for handling special characters
+- XML sanitization to remove invalid characters
+- Simple and intuitive API
+- Customizable root and child node names
+- Support for XML attributes
+- Special boolean value handling
 
-```bash
-composer require tourze/xml-helper
-```
-
-## 使用示例 / Usage Examples
-
-### XML 转数组 / XML to Array
-
-```php
-use Tourze\XML\XML;
-
-$xml = '<xml><name>test</name><age>18</age></xml>';
-$array = XML::parse($xml);
-```
-
-### 数组转 XML / Array to XML
-
-```php
-use Tourze\XML\XML;
-
-$array = [
-    'name' => 'test',
-    'age' => 18
-];
-$xml = XML::build($array);
-```
-
-### 带属性的 XML / XML with Attributes
-
-```php
-use Tourze\XML\XML;
-
-$array = [
-    'item' => [
-        ['id' => 1, 'name' => 'test1'],
-        ['id' => 2, 'name' => 'test2']
-    ]
-];
-$xml = XML::build($array, 'root', 'item', '', 'id');
-```
-
-## 系统要求 / Requirements
+## Requirements
 
 - PHP >= 8.1
 - ext-simplexml
 - ext-libxml
 
-## 许可证 / License
+## Installation
 
-MIT License
+Install via Composer:
 
-## 致谢 / Credits
+```bash
+composer require tourze/xml-helper
+```
 
-本包部分代码来自 [easywechat](https://github.com/w7corp/easywechat)，感谢原作者。
+## Quick Start
 
-Some code in this package is from [easywechat](https://github.com/w7corp/easywechat), thanks to the original author.
+### Import the namespace
+
+```php
+use Tourze\XML\XML;
+```
+
+### Convert XML to Array
+
+```php
+$xml = '<xml><name><![CDATA[John Doe]]></name><age>25</age></xml>';
+$array = XML::parse($xml);
+
+// Result:
+// [
+//     'name' => 'John Doe',
+//     'age' => '25'
+// ]
+```
+
+### Convert Array to XML
+
+```php
+$array = [
+    'name' => 'John Doe',
+    'age' => 25
+];
+
+$xml = XML::build($array);
+// Result: <xml><name><![CDATA[John Doe]]></name><age>25</age></xml>
+```
+
+## Documentation
+
+### XML::parse(string $xml): array
+
+Parses an XML string into a PHP array.
+
+```php
+$xml = '<xml><user><name>Alice</name><age>30</age></user></xml>';
+$array = XML::parse($xml);
+```
+
+### XML::build(array $data, string $root = 'xml', string $item = 'item', $attr = '', $id = 'id', $cdata = true, $listKey = [], $specialBool = false): string
+
+Converts a PHP array to an XML string.
+
+Parameters:
+- `$data`: The array to convert
+- `$root`: Root element name (default: 'xml')
+- `$item`: Default name for numerically indexed items (default: 'item')
+- `$attr`: XML attributes for the root element (string or array)
+- `$id`: Attribute name for numeric keys (default: 'id')
+- `$cdata`: Whether to wrap string values in CDATA (default: true)
+- `$listKey`: Array of keys to format as a flat list
+- `$specialBool`: Whether to output boolean values as 'true'/'false' strings (default: false)
+
+```php
+// With custom root element
+$xml = XML::build($array, 'root');
+
+// With attributes
+$xml = XML::build($array, 'xml', 'item', ['version' => '1.0', 'encoding' => 'UTF-8']);
+
+// Handling lists with nested objects
+$listData = [
+    'products' => [
+        ['name' => 'Product 1', 'price' => 100],
+        ['name' => 'Product 2', 'price' => 200]
+    ]
+];
+$xml = XML::build($listData, 'root', 'item', '', 'id', true, ['products']);
+```
+
+### XML::cdata(string $string): string
+
+Wraps a string in CDATA tags.
+
+```php
+$cdata = XML::cdata('Special characters & < >');
+// Result: <![CDATA[Special characters & < >]]>
+```
+
+### XML::sanitize(string $xml): string
+
+Removes invalid XML characters from a string.
+
+```php
+$safeXml = XML::sanitize($potentiallyInvalidXml);
+```
+
+## Example Use Cases
+
+### Working with API Responses
+
+```php
+// Parse an XML API response
+$xmlResponse = getAPIResponse(); // Returns XML string
+$data = XML::parse($xmlResponse);
+
+// Process the data as a PHP array
+$processedData = processData($data);
+
+// Convert back to XML if needed
+$xmlOut = XML::build($processedData);
+```
+
+### Handling Complex Structures
+
+```php
+$data = [
+    'header' => [
+        'version' => '1.0',
+        'encoding' => 'UTF-8'
+    ],
+    'body' => [
+        'user' => [
+            'name' => 'Jane Smith',
+            'email' => 'jane@example.com',
+            'roles' => [
+                'role' => ['admin', 'editor']
+            ]
+        ],
+        'status' => true
+    ]
+];
+
+$xml = XML::build($data, 'message', 'item', '', 'id', true, [], true);
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Testing
+
+```bash
+composer test
+```
+
+## License
+
+This package is open-sourced software licensed under the MIT license. See the [LICENSE](LICENSE) file for more information.
