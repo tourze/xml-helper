@@ -82,7 +82,7 @@ class XML
         if (is_array($obj)) {
             foreach ($obj as $key => $value) {
                 $res = self::normalize($value);
-                if (('@attributes' === $key) && $key) {
+                if ('@attributes' === $key) {
                     $result = $res; // @codeCoverageIgnore
                 } else {
                     $result[$key] = $res;
@@ -109,10 +109,12 @@ class XML
 
         foreach ($data as $key => $val) {
             if (is_numeric($key)) {
-                $id && $attr = " {$id}=\"{$key}\"";
+                if ($id !== '') {
+                    $attr = " {$id}=\"{$key}\"";
+                }
                 $key = $item;
             }
-            if (in_array($key, $listKey) && is_array($val) || is_object($val)) {
+            if (in_array($key, $listKey) && (is_array($val) || is_object($val))) {
                 foreach ($val as $valItem) {
                     $xml .= "<{$key}{$attr}>";
                     $xml .= self::data2Xml((array) $valItem, $item, $id, $cdata, $listKey, $specialBool);
