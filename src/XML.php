@@ -18,23 +18,26 @@ class XML
     /**
      * XML encode.
      *
+     * @param mixed $data
      * @param string $root
      * @param string $item
-     * @param string $attr
+     * @param string|array $attr
      * @param string $id
+     * @param bool $cdata
      * @param array $listKey 临时起的参数 ，这个key的数据如果为数组，数组的对象全在一层
+     * @param bool $specialBool
      * @return string
      */
     public static function build(
-        $data,
+        mixed $data,
         string $root = 'xml',
         string $item = 'item',
-        $attr = '',
-        $id = 'id',
-        $cdata = true,
-        $listKey = [],
-        $specialBool = false,
-    ) {
+        string|array $attr = '',
+        string $id = 'id',
+        bool $cdata = true,
+        array $listKey = [],
+        bool $specialBool = false,
+    ): string {
         if (is_array($attr)) {
             $_attr = [];
 
@@ -60,7 +63,7 @@ class XML
      * @param string $string
      * @return string
      */
-    public static function cdata($string)
+    public static function cdata(string $string): string
     {
         return sprintf('<![CDATA[%s]]>', $string);
     }
@@ -71,7 +74,7 @@ class XML
      * @param \SimpleXMLElement $obj
      * @return array
      */
-    protected static function normalize($obj)
+    protected static function normalize(\SimpleXMLElement|array|string|null $obj): mixed
     {
         $result = null;
 
@@ -103,8 +106,14 @@ class XML
      * @param string $id
      * @return string
      */
-    protected static function data2Xml($data, string $item = 'item', string $id = 'id', $cdata = true, $listKey = [], $specialBool = false)
-    {
+    protected static function data2Xml(
+        mixed $data, 
+        string $item = 'item', 
+        string $id = 'id', 
+        bool $cdata = true, 
+        array $listKey = [], 
+        bool $specialBool = false
+    ): string {
         $xml = $attr = '';
 
         foreach ($data as $key => $val) {
@@ -155,7 +164,7 @@ class XML
      * @param string $xml
      * @return string
      */
-    public static function sanitize($xml)
+    public static function sanitize(string $xml): string
     {
         return preg_replace('/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]+/u', '', $xml);
     }

@@ -16,7 +16,6 @@ class XMLTest extends TestCase
         $xml = '<xml><name><![CDATA[张三]]></name><age>25</age></xml>';
         $array = XML::parse($xml);
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayHasKey('age', $array);
         $this->assertEquals('张三', $array['name']);
@@ -26,7 +25,6 @@ class XMLTest extends TestCase
         $xml = '<xml><user><name>李四</name><profile><age>30</age><city>北京</city></profile></user></xml>';
         $array = XML::parse($xml);
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('user', $array);
         $this->assertIsArray($array['user']);
         $this->assertEquals('李四', $array['user']['name']);
@@ -37,7 +35,6 @@ class XMLTest extends TestCase
         $xml = '<xml><items><item>苹果</item><item>香蕉</item></items></xml>';
         $array = XML::parse($xml);
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('items', $array);
         $this->assertIsArray($array['items']);
         $this->assertArrayHasKey('item', $array['items']);
@@ -196,7 +193,6 @@ class XMLTest extends TestCase
         $xml = '<response status="success"><data id="123"><name>测试产品</name><price>99.99</price></data></response>';
         $array = XML::parse($xml);
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('data', $array);
         $this->assertIsArray($array['data']);
         $this->assertEquals('测试产品', $array['data']['name']);
