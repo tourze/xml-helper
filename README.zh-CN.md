@@ -2,11 +2,53 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
+[![PHP Version](https://img.shields.io/packagist/php-v/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
 [![Latest Version](https://img.shields.io/packagist/v/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
 [![Total Downloads](https://img.shields.io/packagist/dt/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
 [![License](https://img.shields.io/packagist/l/tourze/xml-helper.svg?style=flat-square)](https://packagist.org/packages/tourze/xml-helper)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/owner/repo/ci.yml?style=flat-square)](https://github.com/owner/repo/actions)
+[![Code Coverage](https://img.shields.io/codecov/c/github/owner/repo?style=flat-square)](https://codecov.io/gh/owner/repo)
 
-一个轻量级的 PHP XML 处理库，提供方便的方法用于 XML 字符串和 PHP 数组之间的相互转换。
+一个轻量级的 PHP XML 处理库，
+提供方便的方法用于 XML 字符串和 PHP 数组之间的相互转换。
+
+## 目录
+
+- [安装](#安装)
+- [环境要求](#环境要求)
+- [功能特点](#功能特点)
+- [快速开始](#快速开始)
+  - [引入命名空间](#引入命名空间)
+  - [XML 转数组](#xml-转数组)
+  - [数组转 XML](#数组转-xml)
+- [详细文档](#详细文档)
+  - [XML::parse()](#xmlparse)
+  - [XML::build()](#xmlbuild)
+  - [XML::cdata()](#xmlcdata)
+  - [XML::sanitize()](#xmlsanitize)
+- [高级用法](#高级用法)
+  - [自定义配置](#自定义配置)
+  - [性能优化](#性能优化)
+- [使用示例](#使用示例)
+  - [处理 API 响应](#处理-api-响应)
+  - [处理复杂结构](#处理复杂结构)
+- [贡献](#贡献)
+- [测试](#测试)
+- [许可证](#许可证)
+
+## 安装
+
+通过 Composer 安装:
+
+```bash
+composer require tourze/xml-helper
+```
+
+## 环境要求
+
+- PHP >= 8.1
+- ext-simplexml
+- ext-libxml
 
 ## 功能特点
 
@@ -18,20 +60,6 @@
 - 可自定义根节点和子节点名称
 - 支持 XML 属性
 - 特殊布尔值处理
-
-## 环境要求
-
-- PHP >= 8.1
-- ext-simplexml
-- ext-libxml
-
-## 安装
-
-通过 Composer 安装:
-
-```bash
-composer require tourze/xml-helper
-```
 
 ## 快速开始
 
@@ -68,7 +96,7 @@ $xml = XML::build($array);
 
 ## 详细文档
 
-### XML::parse(string $xml): array
+### XML::parse()
 
 将 XML 字符串解析为 PHP 数组。
 
@@ -77,7 +105,7 @@ $xml = '<xml><user><name>李四</name><age>30</age></user></xml>';
 $array = XML::parse($xml);
 ```
 
-### XML::build(array $data, string $root = 'xml', string $item = 'item', $attr = '', $id = 'id', $cdata = true, $listKey = [], $specialBool = false): string
+### XML::build()
 
 将 PHP 数组转换为 XML 字符串。
 
@@ -105,10 +133,18 @@ $listData = [
         ['name' => '产品2', 'price' => 200]
     ]
 ];
-$xml = XML::build($listData, 'root', 'item', '', 'id', true, ['products']);
+$xml = XML::build(
+    $listData, 
+    'root', 
+    'item', 
+    '', 
+    'id', 
+    true, 
+    ['products']
+);
 ```
 
-### XML::cdata(string $string): string
+### XML::cdata()
 
 将字符串包装在 CDATA 标签中。
 
@@ -117,12 +153,41 @@ $cdata = XML::cdata('特殊字符 & < >');
 // 结果: <![CDATA[特殊字符 & < >]]>
 ```
 
-### XML::sanitize(string $xml): string
+### XML::sanitize()
 
 从字符串中删除无效的 XML 字符。
 
 ```php
 $safeXml = XML::sanitize($potentiallyInvalidXml);
+```
+
+## 高级用法
+
+### 自定义配置
+
+```php
+// 高级构建选项
+$xml = XML::build(
+    $data,
+    $root = 'customRoot',
+    $item = 'customItem', 
+    $attr = ['version' => '2.0'],
+    $id = 'identifier',
+    $cdata = false,
+    $listKey = ['products', 'categories'],
+    $specialBool = true
+);
+```
+
+### 性能优化
+
+```php
+// 对于大型数据集，如果不需要可以禁用 CDATA
+$xml = XML::build($largeArray, 'root', 'item', '', 'id', false);
+
+// 预先清理 XML 以获得更好的性能
+$cleanXml = XML::sanitize($rawXmlString);
+$array = XML::parse($cleanXml);
 ```
 
 ## 使用示例
@@ -171,7 +236,7 @@ $xml = XML::build($data, 'message', 'item', '', 'id', true, [], true);
 ## 测试
 
 ```bash
-composer test
+./vendor/bin/phpunit packages/xml-helper/tests
 ```
 
 ## 许可证

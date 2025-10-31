@@ -1,11 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\XML\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tourze\XML\XML;
 
-class XMLTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(XML::class)]
+final class XMLTest extends TestCase
 {
     /**
      * 测试 XML 解析为数组
@@ -51,7 +58,7 @@ class XMLTest extends TestCase
         // 测试基本构建
         $array = [
             'name' => '张三',
-            'age' => 25
+            'age' => 25,
         ];
 
         $xml = XML::build($array);
@@ -71,9 +78,9 @@ class XMLTest extends TestCase
                 'name' => '李四',
                 'profile' => [
                     'age' => 30,
-                    'city' => '北京'
-                ]
-            ]
+                    'city' => '北京',
+                ],
+            ],
         ];
 
         $xml = XML::build($nestedArray);
@@ -87,8 +94,8 @@ class XMLTest extends TestCase
         $indexedArray = [
             'items' => [
                 '苹果',
-                '香蕉'
-            ]
+                '香蕉',
+            ],
         ];
 
         $xml = XML::build($indexedArray, 'xml', 'item');
@@ -104,8 +111,8 @@ class XMLTest extends TestCase
         $listData = [
             'products' => [
                 ['name' => '产品1', 'price' => 100],
-                ['name' => '产品2', 'price' => 200]
-            ]
+                ['name' => '产品2', 'price' => 200],
+            ],
         ];
         $xml = XML::build($listData, 'root', 'item', '', 'id', true, ['products']);
         $this->assertStringContainsString('<products>', $xml);
@@ -117,7 +124,7 @@ class XMLTest extends TestCase
         // 测试特殊布尔值处理
         $boolArray = [
             'status' => true,
-            'active' => false
+            'active' => false,
         ];
         $xml = XML::build($boolArray, 'xml', 'item', '', 'id', true, [], true);
         $this->assertStringContainsString('<status>true</status>', $xml);
@@ -162,8 +169,8 @@ class XMLTest extends TestCase
             'name' => '张三',
             'age' => 25,
             'items' => [
-                'item' => ['苹果', '香蕉']
-            ]
+                'item' => ['苹果', '香蕉'],
+            ],
         ];
 
         // 构建 XML
